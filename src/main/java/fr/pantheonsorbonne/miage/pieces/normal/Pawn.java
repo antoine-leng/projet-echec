@@ -1,8 +1,10 @@
 package fr.pantheonsorbonne.miage.pieces.normal;
 
-import fr.pantheonsorbonne.miage.board.ChessBoard;
 import java.util.ArrayList;
 import java.util.List;
+
+import fr.pantheonsorbonne.miage.board.ChessBoard;
+import fr.pantheonsorbonne.miage.pieces.ChessPiece;
 
 public class Pawn extends NormalPiece {
 

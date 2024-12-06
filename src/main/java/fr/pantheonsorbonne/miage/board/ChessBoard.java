@@ -11,6 +11,21 @@ public class ChessBoard {
         this.grid = new ChessPiece[rows][cols];
     }
 
+    public void display() {
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                ChessPiece piece = grid[i][j];
+                if (piece != null) {
+                    System.out.print(piece.getNotation() + " ");
+                } else {
+                    System.out.print(".  "); // Case vide
+                }
+            }
+            System.out.println();
+        }
+    }
+
+
     public int getRows() {
         return rows;
     }
