@@ -6,19 +6,19 @@ import java.util.List;
 import fr.pantheonsorbonne.miage.board.ChessBoard;
 import fr.pantheonsorbonne.miage.pieces.ChessPiece;
 
-public class SpecialRook extends SpecialPiece {
+public class SpecialBishop extends SpecialPiece {
 
-    public SpecialRook(String color, int row, int col) {
+    public SpecialBishop(String color, int row, int col) {
         super(color, row, col);
     }
 
     @Override
     public List<int[]> getPossibleMoves(ChessBoard board) {
         List<int[]> moves = new ArrayList<>();
-        int[][] directions = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+        int[][] directions = {{1, 1}, {-1, -1}, {1, -1}, {-1, 1}};
 
         for (int[] direction : directions) {
-            for (int step = 1; step <= 3; step++) { // Super Tour : portée limitée à 3 cases
+            for (int step = 1; step <= 3; step++) {
                 int newRow = row + direction[0] * step;
                 int newCol = col + direction[1] * step;
                 if (!board.isValidCell(newRow, newCol)) break;
@@ -38,16 +38,15 @@ public class SpecialRook extends SpecialPiece {
     }
 
      @Override
-    public void crush(ChessBoard board, int targetRow, int targetCol) {
-         // Logique d'élimination des pièces sur le chemin
+     public void crush(ChessBoard board, int targetRow, int targetCol) {
          ChessPiece target = board.getPiece(targetRow, targetCol);
          if (target != null) {
-             board.setPiece(targetRow, targetCol, null); // Supprime la pièce
+             board.setPiece(targetRow, targetCol, null);
          }
      }
 
     @Override
     public char getSymbol() {
-        return 'R'; // Symbole pour la super tour
+        return 'F'; // Symbole pour la super fou
     }
 }
