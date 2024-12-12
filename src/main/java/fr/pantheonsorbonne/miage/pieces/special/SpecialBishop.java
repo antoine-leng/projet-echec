@@ -37,16 +37,8 @@ public class SpecialBishop extends SpecialPiece {
         return moves;
     }
 
-     @Override
-     public void crush(ChessBoard board, int targetRow, int targetCol) {
-         ChessPiece target = board.getPiece(targetRow, targetCol);
-         if (target != null) {
-             board.setPiece(targetRow, targetCol, null);
-         }
-     }
-
     @Override
     public char getSymbol() {
-        return 'F'; // Symbole pour la super fou
+        return 'B';
     }
 }

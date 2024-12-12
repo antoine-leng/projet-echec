@@ -8,6 +8,13 @@
       "type": "java",
       "name": "Main",
       "request": "launch",
+      "mainClass": "fr.pantheonsorbonne.miage.engine.Main",
+      "projectName": "artifactId"
+    },
+    {
+      "type": "java",
+      "name": "Main",
+      "request": "launch",
       "mainClass": "fr.pantheonsorbonne.miage.app.Main",
       "projectName": "artifactId"
     },

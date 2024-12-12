@@ -9,6 +9,6 @@ public abstract class NormalPiece extends ChessPiece {
 
     @Override
     public boolean isSpecialPiece() {
-        return false; // Les pièces normales ne sont pas spéciales
+        return false; 
     }
 }
