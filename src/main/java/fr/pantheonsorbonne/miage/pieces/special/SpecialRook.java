@@ -15,20 +15,21 @@ public class SpecialRook extends SpecialPiece {
     @Override
     public List<int[]> getPossibleMoves(ChessBoard board) {
         List<int[]> moves = new ArrayList<>();
-        int[][] directions = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+        int[][] directions = { { 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 } };
 
         for (int[] direction : directions) {
-            for (int step = 1; step <= 3; step++) { // Super Tour : portée limitée à 3 cases
+            for (int step = 1; step <= 3; step++) { 
                 int newRow = row + direction[0] * step;
                 int newCol = col + direction[1] * step;
-                if (!board.isValidCell(newRow, newCol)) break;
+                if (!board.isValidCell(newRow, newCol))
+                    break;
 
                 ChessPiece target = board.getPiece(newRow, newCol);
                 if (target == null) {
-                    moves.add(new int[]{newRow, newCol});
+                    moves.add(new int[] { newRow, newCol });
                 } else {
                     if (!target.getColor().equals(this.color)) {
-                        moves.add(new int[]{newRow, newCol});
+                        moves.add(new int[] { newRow, newCol });
                     }
                     break;
                 }
@@ -37,17 +38,8 @@ public class SpecialRook extends SpecialPiece {
         return moves;
     }
 
-     @Override
-    public void crush(ChessBoard board, int targetRow, int targetCol) {
-         // Logique d'élimination des pièces sur le chemin
-         ChessPiece target = board.getPiece(targetRow, targetCol);
-         if (target != null) {
-             board.setPiece(targetRow, targetCol, null); // Supprime la pièce
-         }
-     }
-
     @Override
     public char getSymbol() {
-        return 'R'; // Symbole pour la super tour
+        return 'R';
     }
 }

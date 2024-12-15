@@ -59,6 +59,42 @@ La mécanique d'écrasement est introduite avec les super-pièces et toutes les 
 Cette mécanique écrase toutes les pièces sur le chemin d'une super-pièce lorsque celle ci se déplace 
 y compris les pièces alliées et les autres super pièces (si elle touche une case appartenant à l'autre super-pièce)
 
+Principes généraux :
+
+Immunité aux pièces ordinaires :
+
+Une super pièce ne peut pas être capturée par une pièce ordinaire. Elle ne peut être capturée que par une autre super pièce.
+Pouvoir "écrasant" :
+
+Une super pièce traverse toutes les pièces sur son passage, qu'elles soient alliées ou ennemies, et les élimine.
+Cependant, elle ne peut pas traverser ni capturer directement un roi (allié ou ennemi). Elle peut néanmoins mettre un roi en échec, voire échec et mat.
+Fusion pour créer une super pièce :
+
+Une super pièce est créée par la fusion de deux pièces identiques du même camp. La fusion s’effectue de la manière suivante :
+Super tour : Une tour "mange" une autre tour alliée ; la super tour naît sur la case où la tour a été capturée.
+Super cavalier : Un cavalier "mange" un autre cavalier allié.
+Super fou : Exception : les deux fous du même camp doivent se trouver sur des cases de couleurs différentes, côte à côte à une distance d’une case (pas en diagonale). La super pièce naît sur une des cases occupées par les deux fous.
+Super reine : Il faut promouvoir une deuxième reine pour effectuer la fusion avec une reine existante.
+Caractéristiques des supers pièces :
+
+Super tour :
+
+Se déplace en ligne droite (verticalement ou horizontalement).
+Portée : 3 cases dans n'importe quelle direction.
+Super fou :
+
+Se déplace en diagonale.
+Portée : 3 cases dans n'importe quelle direction.
+Super cavalier :
+
+Se déplace comme un roi, soit d'une case dans n'importe quelle direction (horizontalement, verticalement, ou diagonalement).
+Super reine :
+
+Combine les mouvements de la super tour et du super fou.
+Se déplace en ligne droite (verticalement, horizontalement ou diagonalement).
+Portée : 3 cases dans n'importe quelle direction.
+
+
 
 ## **EndGame et conditions de victoire**
 
@@ -82,6 +118,29 @@ En outre, une partie peut se terminer lorsqu'il ne reste que deux joueurs et que
 a une avance de 21 points ou plus sur le tableau d'affichage. 
 Ce joueur peut revendiquer la victoire en abandonnant et en accordant 20 points à l'autre joueur 
 qui ne pourra pas le rattraper.
+
+# Description du plateau
+
+
+Les coins (3x3 cases) sont des zones non jouables, marquées par #.
+Les zones jouables sont marquées par - si elles sont vides.
+Chaque camp est symétrique et dispose ses pièces standard comme suit :
+En haut (jaune) :
+1ère ligne : R N B K Q B N R
+2ème ligne : P P P P P P P P
+En bas (rouge) :
+13ème ligne : P P P P P P P P
+14ème ligne : R N B Q K B N R
+À gauche (bleu) :
+Pièces disposées de haut en bas avec :
+R sur la 4ème ligne, suivi de N B K Q B N R jusqu'à la 11ème ligne.
+Pions P alignés sur la 3ème colonne de la 4ème à la 11ème ligne.
+À droite (vert) :
+Pièces disposées de bas en haut avec :
+R sur la 4ème ligne, suivi de N B Q K B N R jusqu'à la 11ème ligne.
+Pions P alignés sur la 12ème colonne de la 4ème à la 11ème ligne.
+
+La couleur des pièces est indiquée par un chiffre avec la lettre, rouge :1 , vert :2 , jaune :3 et bleu:4 par exemple 1P est un pion rouge
 
 # Protocole réseau
 
