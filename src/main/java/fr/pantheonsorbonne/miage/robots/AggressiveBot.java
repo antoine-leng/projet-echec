@@ -25,15 +25,15 @@ public class AggressiveBot extends RobotPlayer {
             for (int col = 0; col < board.getCols(); col++) {
                 ChessPiece piece = board.getPiece(row, col);
                 if (piece != null && piece.getColor().equals(this.color)) {
-                    List<int[]> possibleMoves = piece.getPossibleMoves(board);
+                    List<int[]> possibleMoves = piece.getPossibleActions(board);
                     for (int[] move : possibleMoves) {
                         Action action = new Action(row, col, move[0], move[1]);
                         ChessPiece target = board.getPiece(move[0], move[1]);
 
                         if (target != null && !target.getColor().equals(this.color)) {
-                            captureMoves.add(action); 
+                            captureMoves.add(action);
                         } else {
-                            legalMoves.add(action); 
+                            legalMoves.add(action);
                         }
                     }
                 }
@@ -43,8 +43,8 @@ public class AggressiveBot extends RobotPlayer {
         if (!captureMoves.isEmpty()) {
             return captureMoves.get(random.nextInt(captureMoves.size()));
         } else if (!legalMoves.isEmpty()) {
-            return legalMoves.get(random.nextInt(legalMoves.size())); 
+            return legalMoves.get(random.nextInt(legalMoves.size()));
         }
-        return null; 
+        return null;
     }
 }

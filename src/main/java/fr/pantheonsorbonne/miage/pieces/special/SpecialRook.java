@@ -13,12 +13,12 @@ public class SpecialRook extends SpecialPiece {
     }
 
     @Override
-    public List<int[]> getPossibleMoves(ChessBoard board) {
+    public List<int[]> getPossibleActions(ChessBoard board) {
         List<int[]> moves = new ArrayList<>();
         int[][] directions = { { 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 } };
 
         for (int[] direction : directions) {
-            for (int step = 1; step <= 3; step++) { 
+            for (int step = 1; step <= 3; step++) {
                 int newRow = row + direction[0] * step;
                 int newCol = col + direction[1] * step;
                 if (!board.isValidCell(newRow, newCol))

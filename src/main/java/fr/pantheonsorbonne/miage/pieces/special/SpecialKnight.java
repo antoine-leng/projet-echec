@@ -13,10 +13,10 @@ public class SpecialKnight extends SpecialPiece {
     }
 
     @Override
-    public List<int[]> getPossibleMoves(ChessBoard board) {
+    public List<int[]> getPossibleActions(ChessBoard board) {
         List<int[]> moves = new ArrayList<>();
         int[][] directions = {
-                { 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 }
+                { 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 },
                 { 1, 1 }, { -1, -1 }, { 1, -1 }, { -1, 1 }
         };
 
@@ -27,7 +27,7 @@ public class SpecialKnight extends SpecialPiece {
             if (board.isValidCell(newRow, newCol)) {
                 ChessPiece target = board.getPiece(newRow, newCol);
                 if (target == null || !target.getColor().equals(this.color)) {
-                    moves.add(new int[] { newRow, newCol }); 
+                    moves.add(new int[] { newRow, newCol });
                 }
             }
         }
@@ -36,6 +36,6 @@ public class SpecialKnight extends SpecialPiece {
 
     @Override
     public char getSymbol() {
-        return 'N'; 
+        return 'N';
     }
 }

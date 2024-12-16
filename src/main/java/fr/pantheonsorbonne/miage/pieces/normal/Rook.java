@@ -13,22 +13,23 @@ public class Rook extends NormalPiece {
     }
 
     @Override
-    public List<int[]> getPossibleMoves(ChessBoard board) {
+    public List<int[]> getPossibleActions(ChessBoard board) {
         List<int[]> moves = new ArrayList<>();
-        int[][] directions = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+        int[][] directions = { { 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 } };
 
         for (int[] direction : directions) {
             for (int step = 1; step < 14; step++) {
                 int newRow = row + direction[0] * step;
                 int newCol = col + direction[1] * step;
-                if (!board.isValidCell(newRow, newCol)) break;
+                if (!board.isValidCell(newRow, newCol))
+                    break;
 
                 ChessPiece target = board.getPiece(newRow, newCol);
                 if (target == null) {
-                    moves.add(new int[]{newRow, newCol});
+                    moves.add(new int[] { newRow, newCol });
                 } else {
                     if (!target.getColor().equals(this.color)) {
-                        moves.add(new int[]{newRow, newCol});
+                        moves.add(new int[] { newRow, newCol });
                     }
                     break;
                 }
