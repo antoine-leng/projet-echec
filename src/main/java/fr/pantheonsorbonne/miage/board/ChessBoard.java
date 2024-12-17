@@ -185,7 +185,7 @@ public class ChessBoard {
         // Trouver la position du roi
         for (int row = 0; row < rows; row++) {
             for (int col = 0; col < cols; col++) {
-                if (isValidCell(row, col)) { // Vérification des cellules valides
+                if (isValidCell(row, col)) {
                     ChessPiece piece = getPiece(row, col);
                     if (piece != null && piece.getColor().equals(kingColor) && piece.getSymbol() == 'K') {
                         kingRow = row;
@@ -196,14 +196,16 @@ public class ChessBoard {
             }
         }
 
+        // Si le roi est absent, retourner false (pas en échec)
         if (kingRow == -1 || kingCol == -1) {
-            throw new IllegalStateException("Le roi n'a pas été trouvé sur l'échiquier !");
+            System.out.println("Roi de la couleur " + kingColor + " absent du plateau.");
+            return false;
         }
 
         // Vérifier si une pièce adverse peut capturer le roi
         for (int row = 0; row < rows; row++) {
             for (int col = 0; col < cols; col++) {
-                if (isValidCell(row, col)) { // Vérification supplémentaire pour les cellules valides
+                if (isValidCell(row, col)) {
                     ChessPiece piece = getPiece(row, col);
                     if (piece != null && !piece.getColor().equals(kingColor)) {
                         List<int[]> moves = piece.getPossibleActions(this);
