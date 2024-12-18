@@ -11,17 +11,26 @@ public class ScoreManager {
 
     public void updateScoreForCapture(String playerColor, ChessPiece capturedPiece) {
         if (capturedPiece != null) {
-            int points = switch (capturedPiece.getClass().getSimpleName()) {
-                case "Pawn" -> 1;
-                case "Knight", "Bishop" -> 3;
-                case "Rook" -> 5;
-                case "Queen" -> 9;
-                case "King" -> 20; // Exemple, si le roi est capturé
-                default -> 0;
-            };
+            int points = 0;
+            String pieceName = capturedPiece.getClass().getSimpleName();
+    
+            if (pieceName.equals("Pawn")) {
+                points = 1;
+            } else if (pieceName.equals("Knight") || pieceName.equals("Bishop")) {
+                points = 3;
+            } else if (pieceName.equals("Rook")) {
+                points = 5;
+            } else if (pieceName.equals("Queen")) {
+                points = 9;
+            } else if (pieceName.equals("King")) { // Exemple, si le roi est capturé
+                points = 20;
+            }
+    
+            // Met à jour le score pour la couleur donnée
             gameState.updateScore(playerColor, points);
         }
     }
+    
 
     public void updateScoreForSpecialMove(String playerColor, int points) {
         gameState.updateScore(playerColor, points);

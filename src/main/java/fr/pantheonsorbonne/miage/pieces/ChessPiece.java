@@ -20,7 +20,6 @@ public abstract class ChessPiece {
         this.dynamicColor = dynamicColor;
     }
 
-
     // Retourne la couleur du joueur
     public String getColor() {
         return color;
@@ -30,8 +29,6 @@ public abstract class ChessPiece {
     public int getRow() {
         return row;
     }
-
-
 
     public int getCol() {
         return col;
@@ -44,24 +41,38 @@ public abstract class ChessPiece {
 
     // Méthode pour récupérer l'icône Unicode de la pièce, avec couleur
     public String getUnicode() {
-        String baseSymbol = switch (getSymbol()) {
-            case 'K' -> "\u265A"; // Roi ♚
-            case 'Q' -> "\u265B"; // Reine ♛
-            case 'R' -> "\u265C"; // Tour ♜
-            case 'B' -> "\u265D"; // Fou ♝
-            case 'N' -> "\u265E"; // Cavalier ♞
-            case 'P' -> "\u265F"; // Pion ♟
-            default -> "?";
-        };
+        String baseSymbol;
 
-        // Ajoute la couleur en fonction du joueur
-        return switch (color) {
-            case "1" -> ColorUtil.colorize(baseSymbol, ColorUtil.RED);    // Rouge
-            case "2" -> ColorUtil.colorize(baseSymbol, ColorUtil.GREEN);  // Vert
-            case "3" -> ColorUtil.colorize(baseSymbol, ColorUtil.YELLOW); // Jaune
-            case "4" -> ColorUtil.colorize(baseSymbol, ColorUtil.BLUE);   // Bleu
-            default -> baseSymbol; // Sans couleur
-        };
+        // Obtenir le symbole Unicode de base
+        char symbol = getSymbol();
+        if (symbol == 'K') {
+            baseSymbol = "\u265A"; // Roi ♚
+        } else if (symbol == 'Q') {
+            baseSymbol = "\u265B"; // Reine ♛
+        } else if (symbol == 'R') {
+            baseSymbol = "\u265C"; // Tour ♜
+        } else if (symbol == 'B') {
+            baseSymbol = "\u265D"; // Fou ♝
+        } else if (symbol == 'N') {
+            baseSymbol = "\u265E"; // Cavalier ♞
+        } else if (symbol == 'P') {
+            baseSymbol = "\u265F"; // Pion ♟
+        } else {
+            baseSymbol = "?";
+        }
+
+        // Ajouter la couleur en fonction du joueur
+        if (color.equals("1")) {
+            return ColorUtil.colorize(baseSymbol, ColorUtil.RED); // Rouge
+        } else if (color.equals("2")) {
+            return ColorUtil.colorize(baseSymbol, ColorUtil.GREEN); // Vert
+        } else if (color.equals("3")) {
+            return ColorUtil.colorize(baseSymbol, ColorUtil.YELLOW); // Jaune
+        } else if (color.equals("4")) {
+            return ColorUtil.colorize(baseSymbol, ColorUtil.BLUE); // Bleu
+        } else {
+            return baseSymbol; // Sans couleur
+        }
     }
 
     // Méthode pour distinguer les pièces spéciales avec un "s" (suffixe)
