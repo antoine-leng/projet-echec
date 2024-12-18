@@ -52,4 +52,4 @@ public class Main {
         System.out.println("\nFin de la partie !");
         System.out.println("Joueur gagnant : " + gameState.getLeadingPlayer());
     }
-}
+}   
