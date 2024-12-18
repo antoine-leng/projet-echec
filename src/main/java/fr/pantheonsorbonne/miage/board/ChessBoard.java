@@ -170,19 +170,8 @@ public class ChessBoard {
         }
         return false;
     }
-
-    public void grayOutPlayerPieces(String playerColor) {
-        for (int row = 0; row < rows; row++) {
-            for (int col = 0; col < cols; col++) {
-                if (isValidCell(row, col)) { // Vérifie si la cellule est valide
-                    ChessPiece piece = getPiece(row, col);
-                    if (piece != null && piece.getColor().equals(playerColor)) {
-                        piece.setColor("gray"); // Change la couleur en gris
-                    }
-                }
-            }
-        }
-    }
+    
+    
 
     public boolean isEnemyPiece(int row, int col, String color) {
         ChessPiece piece = getPiece(row, col);
@@ -213,5 +202,61 @@ public class ChessBoard {
         }
         return true; // Aucun mouvement légal disponible
     }
+    
+    public boolean hasLegalMoves(String playerColor) {
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < cols; col++) {
+                if (!isValidCell(row, col)) {
+                    continue; // Ignorer les cellules invalides
+                }
+    
+                ChessPiece piece = getPiece(row, col);
+                if (piece != null && piece.getColor().equals(playerColor)) {
+                    List<int[]> moves = piece.getPossibleActions(this);
+                    for (int[] move : moves) {
+                        int targetRow = move[0];
+                        int targetCol = move[1];
+    
+                        if (isValidCell(targetRow, targetCol) && isValidMove(row, col, targetRow, targetCol, playerColor)) {
+                            return true; // Un coup légal existe
+                        }
+                    }
+                }
+            }
+        }
+        return false; // Aucun coup légal disponible
+    }
+    
+    
+    private boolean isValidMove(int startRow, int startCol, int targetRow, int targetCol, String playerColor) {
+        ChessPiece piece = getPiece(startRow, startCol);
+        ChessPiece target = getPiece(targetRow, targetCol);
+    
+        setPiece(targetRow, targetCol, piece); // Simuler le mouvement
+        setPiece(startRow, startCol, null);
+        piece.setPosition(targetRow, targetCol);
+    
+        boolean isKingSafe = !isKingInCheck(playerColor);
+    
+        setPiece(startRow, startCol, piece); // Restaurer l'état
+        setPiece(targetRow, targetCol, target);
+        piece.setPosition(startRow, startCol);
+    
+        return isKingSafe; // Retourner si le mouvement est légal
+    }
+
+    public void removePlayerPieces(String playerColor) {
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < cols; col++) {
+                if (isValidCell(row, col)) { // Vérifier si la cellule est valide
+                    ChessPiece piece = getPiece(row, col);
+                    if (piece != null && piece.getColor().equals(playerColor)) {
+                        setPiece(row, col, null); // Supprimer la pièce
+                    }
+                }
+            }
+        }
+    }
+    
     
 }

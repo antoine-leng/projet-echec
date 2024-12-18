@@ -32,7 +32,6 @@ public class GameState {
     }
 
     public void displayScores() {
-        System.out.println("Scores actuels :");
         scores.forEach((color, score) -> System.out.println("Joueur " + color + ": " + score + " points"));
     }
 
