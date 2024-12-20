@@ -20,7 +20,6 @@ public class RandomBot extends RobotPlayer {
     public Action playTurn(ChessBoard board) {
         List<Action> legalMoves = new ArrayList<>();
 
-
         for (int row = 0; row < board.getRows(); row++) {
             for (int col = 0; col < board.getCols(); col++) {
 
@@ -31,7 +30,7 @@ public class RandomBot extends RobotPlayer {
                 ChessPiece piece = board.getPiece(row, col);
 
                 if (piece != null && piece.getColor().equals(this.color)) {
-                    List<int[]> possibleMoves = piece.getPossibleMoves(board);
+                    List<int[]> possibleMoves = piece.getPossibleActions(board);
                     for (int[] move : possibleMoves) {
                         if (board.isValidCell(move[0], move[1])) {
                             legalMoves.add(new Action(row, col, move[0], move[1]));
@@ -44,7 +43,6 @@ public class RandomBot extends RobotPlayer {
         if (legalMoves.isEmpty()) {
             return null;
         }
-
 
         return legalMoves.get(random.nextInt(legalMoves.size()));
     }

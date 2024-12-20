@@ -13,11 +13,11 @@ public class King extends NormalPiece {
     }
 
     @Override
-    public List<int[]> getPossibleMoves(ChessBoard board) {
+    public List<int[]> getPossibleActions(ChessBoard board) {
         List<int[]> moves = new ArrayList<>();
         int[][] directions = {
-            {1, 0}, {-1, 0}, {0, 1}, {0, -1}, 
-            {1, 1}, {1, -1}, {-1, 1}, {-1, -1} 
+                { 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 },
+                { 1, 1 }, { 1, -1 }, { -1, 1 }, { -1, -1 }
         };
 
         for (int[] direction : directions) {
@@ -27,7 +27,7 @@ public class King extends NormalPiece {
             if (board.isValidCell(newRow, newCol)) {
                 ChessPiece target = board.getPiece(newRow, newCol);
                 if (target == null || !target.getColor().equals(this.color)) {
-                    moves.add(new int[]{newRow, newCol}); 
+                    moves.add(new int[] { newRow, newCol });
                 }
             }
         }

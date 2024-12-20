@@ -4,6 +4,8 @@ import fr.pantheonsorbonne.miage.pieces.ChessPiece;
 import fr.pantheonsorbonne.miage.pieces.normal.*;
 import fr.pantheonsorbonne.miage.pieces.special.*;
 
+import java.util.List;
+
 public class ChessBoard {
     private final int rows = 14;
     private final int cols = 14;
@@ -14,36 +16,40 @@ public class ChessBoard {
     }
 
     public void display() {
-        System.out.print("     ");
+        final String HORIZONTAL_LINE = "   " + "-----".repeat(cols); // Ligne horizontale pour chaque rangée
+
+        // Affichage des indices des colonnes
+        System.out.print("  "); // Espace pour les indices de lignes
         for (int col = 0; col < cols; col++) {
-            System.out.printf("%-5d", col);
+            System.out.printf(" %3d ", col);
         }
         System.out.println();
 
-        System.out.print("     ");
-        for (int col = 0; col < cols; col++) {
-            System.out.print("-----");
-        }
-        System.out.println();
-
+        // Affichage des lignes
         for (int i = 0; i < rows; i++) {
-            System.out.printf("%-4d|", i);
+            System.out.println(HORIZONTAL_LINE); // Ligne horizontale
+
+            // Indice de la ligne
+            System.out.printf("%2d |", i);
             for (int j = 0; j < cols; j++) {
+                String content;
+
+                // Contenu de la case : pièce ou vide
                 if (!isValidCell(i, j)) {
-                    System.out.print(" #  |");
+                    content = "##";
                 } else {
                     ChessPiece piece = grid[i][j];
-                    System.out.printf(" %-2s |", (piece != null) ? piece.getNotation() : " ");
+                    content = (piece != null) ? piece.getNotation() + "  " : " "; // Ajout de 4 espaces
                 }
-            }
-            System.out.println();
 
-            System.out.print("     ");
-            for (int col = 0; col < cols; col++) {
-                System.out.print("-----");
+                // Affichage avec un espacement fixe (6 caractères pour chaque case)
+                System.out.printf(" %-3s|", content);
             }
-            System.out.println();
+            System.out.println(); // Nouvelle ligne pour la prochaine rangée
         }
+
+        // Dernière ligne horizontale
+        System.out.println(HORIZONTAL_LINE);
     }
 
     public int getRows() {
@@ -52,6 +58,17 @@ public class ChessBoard {
 
     public int getCols() {
         return cols;
+    }
+
+    public boolean isValidCell(int row, int col) {
+        if (row < 0 || row >= rows || col < 0 || col >= cols) {
+            return false; // Hors limites du tableau
+        }
+        boolean inTopLeftCorner = (row < 3 && col < 3);
+        boolean inTopRightCorner = (row < 3 && col >= cols - 3);
+        boolean inBottomLeftCorner = (row >= rows - 3 && col < 3);
+        boolean inBottomRightCorner = (row >= rows - 3 && col >= cols - 3);
+        return !(inTopLeftCorner || inTopRightCorner || inBottomLeftCorner || inBottomRightCorner);
     }
 
     public ChessPiece getPiece(int row, int col) {
@@ -67,15 +84,6 @@ public class ChessBoard {
         }
         grid[row][col] = piece;
     }
-
-    public boolean isValidCell(int row, int col) {
-        boolean inTopLeftCorner = (row < 3 && col < 3);
-        boolean inTopRightCorner = (row < 3 && col >= cols - 3);
-        boolean inBottomLeftCorner = (row >= rows - 3 && col < 3);
-        boolean inBottomRightCorner = (row >= rows - 3 && col >= cols - 3);
-        return !(inTopLeftCorner || inTopRightCorner || inBottomLeftCorner || inBottomRightCorner);
-    }
-
 
     public void attemptFusion(int row, int col, int targetRow, int targetCol) {
         ChessPiece piece1 = getPiece(row, col);
@@ -107,29 +115,28 @@ public class ChessBoard {
         }
     }
 
-
     public void movePiece(int row, int col, int targetRow, int targetCol) {
         ChessPiece piece = getPiece(row, col);
         if (piece == null) {
             throw new IllegalArgumentException("Aucune pièce à déplacer à (" + row + ", " + col + ")");
         }
-    
+
         if (!isValidCell(targetRow, targetCol)) {
             throw new IllegalArgumentException("Cellule cible invalide : (" + targetRow + ", " + targetCol + ")");
         }
-    
+
         if (getPiece(targetRow, targetCol) != null && !isEnemyPiece(targetRow, targetCol, piece.getColor())) {
-            throw new IllegalArgumentException("Cellule (" + targetRow + ", " + targetCol + ") contient une pièce alliée.");
+            throw new IllegalArgumentException(
+                    "Cellule (" + targetRow + ", " + targetCol + ") contient une pièce alliée.");
         }
 
-        System.out.println("Déplacement : " + piece.getNotation() + " de (" + row + ", " + col + ") à (" + targetRow + ", " + targetCol + ")");
-    
+        System.out.println("Déplacement : " + piece.getNotation() + " de (" + row + ", " + col + ") à (" + targetRow
+                + ", " + targetCol + ")");
 
         setPiece(targetRow, targetCol, piece);
         setPiece(row, col, null);
         piece.setPosition(targetRow, targetCol);
     }
-    
 
     private void moveSpecialPiece(SpecialPiece specialPiece, int row, int col, int targetRow, int targetCol) {
         int dRow = Integer.signum(targetRow - row);
@@ -158,7 +165,6 @@ public class ChessBoard {
         specialPiece.setPosition(targetRow, targetCol);
     }
 
-
     public void promotePawn(int row, int col) {
         ChessPiece piece = getPiece(row, col);
         if (piece instanceof Pawn) {
@@ -172,4 +178,72 @@ public class ChessBoard {
         ChessPiece piece = getPiece(row, col);
         return piece != null && !piece.getColor().equals(color);
     }
+
+    public boolean isKingInCheck(String kingColor) {
+        int kingRow = -1, kingCol = -1;
+
+        // Trouver la position du roi
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < cols; col++) {
+                if (isValidCell(row, col)) { // Vérification des cellules valides
+                    ChessPiece piece = getPiece(row, col);
+                    if (piece != null && piece.getColor().equals(kingColor) && piece.getSymbol() == 'K') {
+                        kingRow = row;
+                        kingCol = col;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (kingRow == -1 || kingCol == -1) {
+            throw new IllegalStateException("Le roi n'a pas été trouvé sur l'échiquier !");
+        }
+
+        // Vérifier si une pièce adverse peut capturer le roi
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < cols; col++) {
+                if (isValidCell(row, col)) { // Vérification supplémentaire pour les cellules valides
+                    ChessPiece piece = getPiece(row, col);
+                    if (piece != null && !piece.getColor().equals(kingColor)) {
+                        List<int[]> moves = piece.getPossibleActions(this);
+                        for (int[] move : moves) {
+                            if (move[0] == kingRow && move[1] == kingCol) {
+                                return true; // Le roi est en échec
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public boolean isPlayerInPat(String playerColor) {
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < cols; col++) {
+                if (isValidCell(row, col)) { // Vérifier d'abord si la cellule est valide
+                    ChessPiece piece = getPiece(row, col);
+                    if (piece != null && piece.getColor().equals(playerColor)) {
+                        List<int[]> moves = piece.getPossibleActions(this);
+                        for (int[] move : moves) {
+                            if (isValidCell(move[0], move[1])) { // Vérification de la cellule cible
+                                ChessPiece temp = getPiece(move[0], move[1]);
+                                setPiece(move[0], move[1], piece);
+                                setPiece(row, col, null);
+                                boolean inCheck = isKingInCheck(playerColor);
+                                setPiece(row, col, piece);
+                                setPiece(move[0], move[1], temp);
+                                if (!inCheck)
+                                    return false; // Il existe un mouvement légal
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return true; // Aucun mouvement légal
+    }
+
 }

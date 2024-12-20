@@ -8,8 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-
-
 public class DefensiveBot extends RobotPlayer {
     private Random random = new Random();
 
@@ -26,11 +24,11 @@ public class DefensiveBot extends RobotPlayer {
             for (int col = 0; col < board.getCols(); col++) {
                 ChessPiece piece = board.getPiece(row, col);
                 if (piece != null && piece.getColor().equals(this.color)) {
-                    List<int[]> possibleMoves = piece.getPossibleMoves(board);
+                    List<int[]> possibleMoves = piece.getPossibleActions(board);
                     for (int[] move : possibleMoves) {
                         Action action = new Action(row, col, move[0], move[1]);
                         if (isSafeMove(board, action)) {
-                            safeMoves.add(action); 
+                            safeMoves.add(action);
                         }
                         legalMoves.add(action);
                     }
@@ -41,13 +39,13 @@ public class DefensiveBot extends RobotPlayer {
         if (!safeMoves.isEmpty()) {
             return safeMoves.get(random.nextInt(safeMoves.size()));
         } else if (!legalMoves.isEmpty()) {
-            return legalMoves.get(random.nextInt(legalMoves.size())); 
+            return legalMoves.get(random.nextInt(legalMoves.size()));
         }
-        return null; 
+        return null;
     }
 
     private boolean isSafeMove(ChessBoard board, Action action) {
 
-        return true; 
+        return true;
     }
 }
