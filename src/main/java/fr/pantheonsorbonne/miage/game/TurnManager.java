@@ -1,7 +1,6 @@
 package fr.pantheonsorbonne.miage.game;
 
 import fr.pantheonsorbonne.miage.board.ChessBoard;
-import fr.pantheonsorbonne.miage.pieces.ChessPiece;
 import fr.pantheonsorbonne.miage.robots.RobotPlayer;
 import fr.pantheonsorbonne.miage.utils.ColorUtil;
 
@@ -9,7 +8,7 @@ import java.util.List;
 
 public class TurnManager {
     private final List<RobotPlayer> players; // Liste des joueurs
-    private int currentPlayerIndex = 0; // Index du joueur courant
+    private int currentPlayerIndex = 0;     // Index du joueur courant
 
     public TurnManager(List<RobotPlayer> players) {
         this.players = players;
@@ -17,15 +16,16 @@ public class TurnManager {
 
     public void playTurn(ChessBoard board, GameState gameState) {
         RobotPlayer currentPlayer = players.get(currentPlayerIndex);
-
+    
         // Passer les joueurs éliminés
         while (gameState.getEliminatedPlayers().contains(currentPlayer.getColor())) {
             nextTurn();
             currentPlayer = players.get(currentPlayerIndex);
         }
-
+    
         System.out.println("Tour du joueur : " + currentPlayer.getColor());
-
+        pause(); // Pause avant le début du tour
+    
         // Exécuter un mouvement
         Action action = currentPlayer.playTurn(board);
         if (action != null) {
@@ -36,45 +36,64 @@ public class TurnManager {
                 System.out.println("Joueur " + currentPlayer.getColor() + " a joué : " +
                         "(" + action.getStartRow() + ", " + action.getStartCol() + ") -> (" +
                         action.getTargetRow() + ", " + action.getTargetCol() + ")");
-
+                pause(); // Pause après l'affichage du mouvement
+    
                 // Vérifier si un roi adverse est en échec
                 for (String opponentColor : gameState.getActivePlayers()) {
                     if (!opponentColor.equals(currentPlayer.getColor()) && board.isKingInCheck(opponentColor)) {
-                        // Message coloré : Joueur X (couleur du joueur) + " est en échec !" (violet)
-                        String colorizedPlayer = ColorUtil.colorize("Joueur " + opponentColor,
-                                getColorCode(opponentColor));
+                        String colorizedPlayer = ColorUtil.colorize("Joueur " + opponentColor, getColorCode(opponentColor));
                         String message = ColorUtil.colorize(" est en échec !", ColorUtil.PURPLE);
                         System.out.println(colorizedPlayer + message);
+                        pause(); // Pause après un échec
                     }
                 }
             } catch (IllegalArgumentException e) {
                 System.out.println("Mouvement invalide : " + e.getMessage());
+                pause();
             }
         } else {
             System.out.println("Joueur " + currentPlayer.getColor() + " n'a pas de mouvement disponible.");
+            pause();
         }
-
-        // Vérifier le pat
+    
+        // Vérifier si le joueur actuel est en pat
         if (board.isPlayerInPat(currentPlayer.getColor())) {
-            System.out.println("Le joueur " + currentPlayer.getColor() + " est en pat !");
+            String patMessage = ColorUtil.colorize("Le joueur " + currentPlayer.getColor() + " est en pat !", ColorUtil.PURPLE);
+            System.out.println(patMessage);
+            pause();
+    
+            // Éliminer le joueur et griser ses pièces
             gameState.eliminatePlayer(currentPlayer.getColor());
+            board.grayOutPlayerPieces(currentPlayer.getColor());
+            pause();
         }
-
+    
         // Passer au prochain joueur
         nextTurn();
+        pause(); // Pause avant le prochain tour
     }
-
-    private String getColorCode(String playerColor) {
-        return switch (playerColor) {
-            case "1" -> ColorUtil.RED; // Rouge
-            case "2" -> ColorUtil.GREEN; // Vert
-            case "3" -> ColorUtil.YELLOW; // Jaune
-            case "4" -> ColorUtil.BLUE; // Bleu
-            default -> ColorUtil.RESET; // Par défaut
-        };
-    }
+    
 
     private void nextTurn() {
         currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
     }
+
+    private String getColorCode(String playerColor) {
+        return switch (playerColor) {
+            case "1" -> ColorUtil.RED;    // Rouge
+            case "2" -> ColorUtil.GREEN;  // Vert
+            case "3" -> ColorUtil.YELLOW; // Jaune
+            case "4" -> ColorUtil.BLUE;   // Bleu
+            default -> ColorUtil.RESET;   // Par défaut
+        };
+    }
+    private void pause() {
+        try {
+            Thread.sleep(100); // Pause de 100 millisecondes = 0,1 seconde
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            System.err.println("Pause interrompue : " + e.getMessage());
+        }
+    }
+    
 }

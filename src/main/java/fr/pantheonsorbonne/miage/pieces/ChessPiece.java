@@ -8,12 +8,18 @@ import fr.pantheonsorbonne.miage.utils.ColorUtil;
 public abstract class ChessPiece {
     protected String color; // Couleur du joueur (1: Rouge, 2: Vert, 3: Jaune, 4: Bleu)
     protected int row, col;
+    protected String dynamicColor; // Couleur modifiable pour l'affichage (ex: gris)
 
     public ChessPiece(String color, int row, int col) {
         this.color = color;
         this.row = row;
         this.col = col;
     }
+
+    public void setColor(String dynamicColor) {
+        this.dynamicColor = dynamicColor;
+    }
+
 
     // Retourne la couleur du joueur
     public String getColor() {
@@ -24,6 +30,8 @@ public abstract class ChessPiece {
     public int getRow() {
         return row;
     }
+
+
 
     public int getCol() {
         return col;
@@ -52,6 +60,7 @@ public abstract class ChessPiece {
             case "2" -> ColorUtil.colorize(baseSymbol, ColorUtil.GREEN);  // Vert
             case "3" -> ColorUtil.colorize(baseSymbol, ColorUtil.YELLOW); // Jaune
             case "4" -> ColorUtil.colorize(baseSymbol, ColorUtil.BLUE);   // Bleu
+            case "gray" -> ColorUtil.colorize(baseSymbol, ColorUtil.GRAY); // Gris pour pièces matées
             default -> baseSymbol; // Sans couleur
         };
     }

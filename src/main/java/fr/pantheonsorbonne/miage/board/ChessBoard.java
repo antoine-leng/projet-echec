@@ -16,39 +16,29 @@ public class ChessBoard {
     }
 
     public void display() {
-        final String HORIZONTAL_LINE = "   " + "-----".repeat(cols); // Ligne horizontale pour chaque rangée
+        final String HORIZONTAL_LINE = "   " + "-----".repeat(cols);
 
-        // Affichage des indices des colonnes
-        System.out.print("  "); // Espace pour les indices de lignes
+        System.out.print("  ");
         for (int col = 0; col < cols; col++) {
             System.out.printf(" %3d ", col);
         }
         System.out.println();
 
-        // Affichage des lignes
         for (int i = 0; i < rows; i++) {
-            System.out.println(HORIZONTAL_LINE); // Ligne horizontale
-
-            // Indice de la ligne
+            System.out.println(HORIZONTAL_LINE);
             System.out.printf("%2d |", i);
             for (int j = 0; j < cols; j++) {
                 String content;
-
-                // Contenu de la case : pièce ou vide
                 if (!isValidCell(i, j)) {
                     content = "##";
                 } else {
                     ChessPiece piece = grid[i][j];
-                    content = (piece != null) ? piece.getNotation() + "  " : " "; // Ajout de 4 espaces
+                    content = (piece != null) ? piece.getNotation() + "  " : " ";
                 }
-
-                // Affichage avec un espacement fixe (6 caractères pour chaque case)
                 System.out.printf(" %-3s|", content);
             }
-            System.out.println(); // Nouvelle ligne pour la prochaine rangée
+            System.out.println();
         }
-
-        // Dernière ligne horizontale
         System.out.println(HORIZONTAL_LINE);
     }
 
@@ -62,7 +52,7 @@ public class ChessBoard {
 
     public boolean isValidCell(int row, int col) {
         if (row < 0 || row >= rows || col < 0 || col >= cols) {
-            return false; // Hors limites du tableau
+            return false;
         }
         boolean inTopLeftCorner = (row < 3 && col < 3);
         boolean inTopRightCorner = (row < 3 && col >= cols - 3);
@@ -130,59 +120,22 @@ public class ChessBoard {
                     "Cellule (" + targetRow + ", " + targetCol + ") contient une pièce alliée.");
         }
 
-        System.out.println("Déplacement : " + piece.getNotation() + " de (" + row + ", " + col + ") à (" + targetRow
-                + ", " + targetCol + ")");
-
         setPiece(targetRow, targetCol, piece);
         setPiece(row, col, null);
         piece.setPosition(targetRow, targetCol);
     }
 
-    private void moveSpecialPiece(SpecialPiece specialPiece, int row, int col, int targetRow, int targetCol) {
-        int dRow = Integer.signum(targetRow - row);
-        int dCol = Integer.signum(targetCol - col);
-
-        int currentRow = row + dRow;
-        int currentCol = col + dCol;
-
-        while (currentRow != targetRow || currentCol != targetCol) {
-            ChessPiece target = getPiece(currentRow, currentCol);
-
-            if (target != null) {
-                if (target instanceof SpecialPiece || target.getSymbol() == 'K') {
-                    throw new IllegalArgumentException(
-                            "Pièce spéciale bloquée par un roi ou une autre pièce spéciale.");
-                }
-                setPiece(currentRow, currentCol, null);
-            }
-
-            currentRow += dRow;
-            currentCol += dCol;
-        }
-
-        setPiece(targetRow, targetCol, specialPiece);
-        setPiece(row, col, null);
-        specialPiece.setPosition(targetRow, targetCol);
-    }
-
     public void promotePawn(int row, int col) {
         ChessPiece piece = getPiece(row, col);
         if (piece instanceof Pawn) {
-            String color = piece.getColor();
-            setPiece(row, col, new Queen(color, row, col));
+            setPiece(row, col, new Queen(piece.getColor(), row, col));
             System.out.println("Pion promu en reine !");
         }
-    }
-
-    public boolean isEnemyPiece(int row, int col, String color) {
-        ChessPiece piece = getPiece(row, col);
-        return piece != null && !piece.getColor().equals(color);
     }
 
     public boolean isKingInCheck(String kingColor) {
         int kingRow = -1, kingCol = -1;
 
-        // Trouver la position du roi
         for (int row = 0; row < rows; row++) {
             for (int col = 0; col < cols; col++) {
                 if (isValidCell(row, col)) {
@@ -196,13 +149,10 @@ public class ChessBoard {
             }
         }
 
-        // Si le roi est absent, retourner false (pas en échec)
         if (kingRow == -1 || kingCol == -1) {
-            System.out.println("Roi de la couleur " + kingColor + " absent du plateau.");
-            return false;
+            return false; // Roi absent
         }
 
-        // Vérifier si une pièce adverse peut capturer le roi
         for (int row = 0; row < rows; row++) {
             for (int col = 0; col < cols; col++) {
                 if (isValidCell(row, col)) {
@@ -211,41 +161,57 @@ public class ChessBoard {
                         List<int[]> moves = piece.getPossibleActions(this);
                         for (int[] move : moves) {
                             if (move[0] == kingRow && move[1] == kingCol) {
-                                return true; // Le roi est en échec
+                                return true;
                             }
                         }
                     }
                 }
             }
         }
-
         return false;
+    }
+
+    public void grayOutPlayerPieces(String playerColor) {
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < cols; col++) {
+                if (isValidCell(row, col)) { // Vérifie si la cellule est valide
+                    ChessPiece piece = getPiece(row, col);
+                    if (piece != null && piece.getColor().equals(playerColor)) {
+                        piece.setColor("gray"); // Change la couleur en gris
+                    }
+                }
+            }
+        }
+    }
+
+    public boolean isEnemyPiece(int row, int col, String color) {
+        ChessPiece piece = getPiece(row, col);
+        return piece != null && !piece.getColor().equals(color);
     }
 
     public boolean isPlayerInPat(String playerColor) {
         for (int row = 0; row < rows; row++) {
             for (int col = 0; col < cols; col++) {
-                if (isValidCell(row, col)) { // Vérifier d'abord si la cellule est valide
+                if (isValidCell(row, col)) { // Vérifie si la cellule est valide
                     ChessPiece piece = getPiece(row, col);
                     if (piece != null && piece.getColor().equals(playerColor)) {
                         List<int[]> moves = piece.getPossibleActions(this);
                         for (int[] move : moves) {
-                            if (isValidCell(move[0], move[1])) { // Vérification de la cellule cible
+                            if (isValidCell(move[0], move[1])) { // Vérifie la validité de la cellule cible
                                 ChessPiece temp = getPiece(move[0], move[1]);
                                 setPiece(move[0], move[1], piece);
                                 setPiece(row, col, null);
                                 boolean inCheck = isKingInCheck(playerColor);
                                 setPiece(row, col, piece);
                                 setPiece(move[0], move[1], temp);
-                                if (!inCheck)
-                                    return false; // Il existe un mouvement légal
+                                if (!inCheck) return false; // Il existe un mouvement légal
                             }
                         }
                     }
                 }
             }
         }
-        return true; // Aucun mouvement légal
+        return true; // Aucun mouvement légal disponible
     }
-
+    
 }
