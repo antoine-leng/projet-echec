@@ -60,7 +60,6 @@ public abstract class ChessPiece {
             case "2" -> ColorUtil.colorize(baseSymbol, ColorUtil.GREEN);  // Vert
             case "3" -> ColorUtil.colorize(baseSymbol, ColorUtil.YELLOW); // Jaune
             case "4" -> ColorUtil.colorize(baseSymbol, ColorUtil.BLUE);   // Bleu
-            case "gray" -> ColorUtil.colorize(baseSymbol, ColorUtil.GRAY); // Gris pour pièces matées
             default -> baseSymbol; // Sans couleur
         };
     }

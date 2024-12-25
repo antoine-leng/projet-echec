@@ -16,16 +16,30 @@ public class TurnManager {
 
     public void playTurn(ChessBoard board, GameState gameState) {
         RobotPlayer currentPlayer = players.get(currentPlayerIndex);
-    
+
         // Passer les joueurs éliminés
         while (gameState.getEliminatedPlayers().contains(currentPlayer.getColor())) {
             nextTurn();
             currentPlayer = players.get(currentPlayerIndex);
         }
-    
+
         System.out.println("Tour du joueur : " + currentPlayer.getColor());
         pause(); // Pause avant le début du tour
-    
+
+        // Vérifier si le roi du joueur est en échec
+        if (board.isKingInCheck(currentPlayer.getColor())) {
+            System.out.println("Le roi du joueur " + currentPlayer.getColor() + " est en échec !");
+
+            // Vérifier s'il y a des coups légaux
+            if (!board.hasLegalMoves(currentPlayer.getColor())) {
+                System.out.println("Le joueur " + currentPlayer.getColor() + " est en échec et mat !");
+                gameState.eliminatePlayer(currentPlayer.getColor());
+                board.removePlayerPieces(currentPlayer.getColor()); // Supprimer les pièces du joueur
+                nextTurn();
+                return; // Passer au prochain joueur
+            }
+        }
+
         // Exécuter un mouvement
         Action action = currentPlayer.playTurn(board);
         if (action != null) {
@@ -37,7 +51,7 @@ public class TurnManager {
                         "(" + action.getStartRow() + ", " + action.getStartCol() + ") -> (" +
                         action.getTargetRow() + ", " + action.getTargetCol() + ")");
                 pause(); // Pause après l'affichage du mouvement
-    
+
                 // Vérifier si un roi adverse est en échec
                 for (String opponentColor : gameState.getActivePlayers()) {
                     if (!opponentColor.equals(currentPlayer.getColor()) && board.isKingInCheck(opponentColor)) {
@@ -55,24 +69,23 @@ public class TurnManager {
             System.out.println("Joueur " + currentPlayer.getColor() + " n'a pas de mouvement disponible.");
             pause();
         }
-    
+
         // Vérifier si le joueur actuel est en pat
         if (board.isPlayerInPat(currentPlayer.getColor())) {
             String patMessage = ColorUtil.colorize("Le joueur " + currentPlayer.getColor() + " est en pat !", ColorUtil.PURPLE);
             System.out.println(patMessage);
             pause();
-    
-            // Éliminer le joueur et griser ses pièces
+
+            // Éliminer le joueur et supprimer ses pièces
             gameState.eliminatePlayer(currentPlayer.getColor());
-            board.grayOutPlayerPieces(currentPlayer.getColor());
+            board.removePlayerPieces(currentPlayer.getColor());
             pause();
         }
-    
+
         // Passer au prochain joueur
         nextTurn();
         pause(); // Pause avant le prochain tour
     }
-    
 
     private void nextTurn() {
         currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
@@ -87,6 +100,7 @@ public class TurnManager {
             default -> ColorUtil.RESET;   // Par défaut
         };
     }
+
     private void pause() {
         try {
             Thread.sleep(100); // Pause de 100 millisecondes = 0,1 seconde
@@ -95,5 +109,4 @@ public class TurnManager {
             System.err.println("Pause interrompue : " + e.getMessage());
         }
     }
-    
 }
