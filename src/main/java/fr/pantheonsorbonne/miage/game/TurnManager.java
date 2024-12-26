@@ -31,13 +31,21 @@ public class TurnManager {
             System.out.println("Le roi du joueur " + currentPlayer.getColor() + " est en échec !");
 
             // Vérifier s'il y a des coups légaux
-            if (!board.hasLegalMoves(currentPlayer.getColor())) {
+            List<String> legalMoves = board.getLegalMovesForPlayer(currentPlayer.getColor());
+            if (legalMoves.isEmpty()) {
                 System.out.println("Le joueur " + currentPlayer.getColor() + " est en échec et mat !");
                 gameState.eliminatePlayer(currentPlayer.getColor());
-                board.removePlayerPieces(currentPlayer.getColor()); // Supprimer les pièces du joueur
+                board.removePlayerPieces(currentPlayer.getColor());
                 nextTurn();
-                return; // Passer au prochain joueur
+                return;
+            } else {
+                System.out.println("Coups légaux disponibles pour sortir de l'échec :");
+                for (String move : legalMoves) {
+                    System.out.println(move);
+                }
+
             }
+            
         }
 
         // Exécuter un mouvement
@@ -103,7 +111,7 @@ public class TurnManager {
 
     private void pause() {
         try {
-            Thread.sleep(100); // Pause de 100 millisecondes = 0,1 seconde
+            Thread.sleep(1); // Pause de 100 millisecondes = 0,1 seconde
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             System.err.println("Pause interrompue : " + e.getMessage());

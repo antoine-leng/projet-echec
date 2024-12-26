@@ -4,6 +4,7 @@ import fr.pantheonsorbonne.miage.pieces.ChessPiece;
 import fr.pantheonsorbonne.miage.pieces.normal.*;
 import fr.pantheonsorbonne.miage.pieces.special.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ChessBoard {
@@ -170,8 +171,6 @@ public class ChessBoard {
         }
         return false;
     }
-    
-    
 
     public boolean isEnemyPiece(int row, int col, String color) {
         ChessPiece piece = getPiece(row, col);
@@ -193,7 +192,8 @@ public class ChessBoard {
                                 boolean inCheck = isKingInCheck(playerColor);
                                 setPiece(row, col, piece);
                                 setPiece(move[0], move[1], temp);
-                                if (!inCheck) return false; // Il existe un mouvement légal
+                                if (!inCheck)
+                                    return false; // Il existe un mouvement légal
                             }
                         }
                     }
@@ -202,22 +202,23 @@ public class ChessBoard {
         }
         return true; // Aucun mouvement légal disponible
     }
-    
+
     public boolean hasLegalMoves(String playerColor) {
         for (int row = 0; row < rows; row++) {
             for (int col = 0; col < cols; col++) {
                 if (!isValidCell(row, col)) {
                     continue; // Ignorer les cellules invalides
                 }
-    
+
                 ChessPiece piece = getPiece(row, col);
                 if (piece != null && piece.getColor().equals(playerColor)) {
                     List<int[]> moves = piece.getPossibleActions(this);
                     for (int[] move : moves) {
                         int targetRow = move[0];
                         int targetCol = move[1];
-    
-                        if (isValidCell(targetRow, targetCol) && isValidMove(row, col, targetRow, targetCol, playerColor)) {
+
+                        if (isValidCell(targetRow, targetCol)
+                                && isValidMove(row, col, targetRow, targetCol, playerColor)) {
                             return true; // Un coup légal existe
                         }
                     }
@@ -226,22 +227,21 @@ public class ChessBoard {
         }
         return false; // Aucun coup légal disponible
     }
-    
-    
-    private boolean isValidMove(int startRow, int startCol, int targetRow, int targetCol, String playerColor) {
+
+    public boolean isValidMove(int startRow, int startCol, int targetRow, int targetCol, String playerColor) {
         ChessPiece piece = getPiece(startRow, startCol);
         ChessPiece target = getPiece(targetRow, targetCol);
-    
+
         setPiece(targetRow, targetCol, piece); // Simuler le mouvement
         setPiece(startRow, startCol, null);
         piece.setPosition(targetRow, targetCol);
-    
+
         boolean isKingSafe = !isKingInCheck(playerColor);
-    
+
         setPiece(startRow, startCol, piece); // Restaurer l'état
         setPiece(targetRow, targetCol, target);
         piece.setPosition(startRow, startCol);
-    
+
         return isKingSafe; // Retourner si le mouvement est légal
     }
 
@@ -257,6 +257,39 @@ public class ChessBoard {
             }
         }
     }
+
+    public List<String> getLegalMovesForPlayer(String playerColor) {
+        List<String> legalMoves = new ArrayList<>();
     
+        // Parcourir toutes les cellules du plateau
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < cols; col++) {
+                if (!isValidCell(row, col)) {
+                    continue; // Ignorer les cellules invalides
+                }
+    
+                ChessPiece piece = getPiece(row, col);
+    
+                // Vérifier si la pièce appartient au joueur actuel
+                if (piece != null && piece.getColor().equals(playerColor)) {
+                    List<int[]> possibleMoves = piece.getPossibleActions(this);
+    
+                    // Vérifier chaque mouvement avec isValidMove
+                    for (int[] move : possibleMoves) {
+                        int targetRow = move[0];
+                        int targetCol = move[1];
+    
+                        // Vérifier si le mouvement est valide en utilisant isValidMove()
+                        if (isValidMove(row, col, targetRow, targetCol, playerColor)) {
+                            legalMoves.add("Pièce: " + piece.getClass().getSimpleName() +
+                                    " (" + row + "," + col + ") -> (" + targetRow + "," + targetCol + ")");
+                        }
+                    }
+                }
+            }
+        }
+    
+        return legalMoves;
+    }
     
 }
