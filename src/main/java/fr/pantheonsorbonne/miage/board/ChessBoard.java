@@ -108,31 +108,51 @@ public class ChessBoard {
 
     public void movePiece(int row, int col, int targetRow, int targetCol) {
         ChessPiece piece = getPiece(row, col);
+    
         if (piece == null) {
             throw new IllegalArgumentException("Aucune pièce à déplacer à (" + row + ", " + col + ")");
         }
-
-        if (!isValidCell(targetRow, targetCol)) {
-            throw new IllegalArgumentException("Cellule cible invalide : (" + targetRow + ", " + targetCol + ")");
-        }
-
-        if (getPiece(targetRow, targetCol) != null && !isEnemyPiece(targetRow, targetCol, piece.getColor())) {
-            throw new IllegalArgumentException(
-                    "Cellule (" + targetRow + ", " + targetCol + ") contient une pièce alliée.");
-        }
-
+    
+        // Déplacer la pièce
         setPiece(targetRow, targetCol, piece);
         setPiece(row, col, null);
         piece.setPosition(targetRow, targetCol);
+    
+        // Vérifier si un pion doit être promu
+        if (piece instanceof Pawn) {
+            promotePawn(targetRow, targetCol);
+        }
     }
+    
 
     public void promotePawn(int row, int col) {
         ChessPiece piece = getPiece(row, col);
+    
+        // Vérifier si la pièce est un pion
         if (piece instanceof Pawn) {
-            setPiece(row, col, new Queen(piece.getColor(), row, col));
-            System.out.println("Pion promu en reine !");
+            String color = piece.getColor();
+            boolean isPromotionPosition = false;
+    
+            // Conditions spécifiques pour chaque couleur
+            if (color.equals("1") && row == 0) { // Rouge
+                isPromotionPosition = true;
+            } else if (color.equals("3") && row == 13) { // Jaune
+                isPromotionPosition = true;
+            } else if (color.equals("4") && col == 13) { // Bleu
+                isPromotionPosition = true;
+            } else if (color.equals("2") && col == 0) { // Vert
+                isPromotionPosition = true;
+            }
+    
+            // Promouvoir seulement si la position est valide
+            if (isPromotionPosition) {
+                setPiece(row, col, new Queen(piece.getColor(), row, col));
+                System.out.println("Pion promu en reine pour le joueur " + color + " !");
+                
+            }
         }
     }
+    
 
     public boolean isKingInCheck(String kingColor) {
         int kingRow = -1, kingCol = -1;

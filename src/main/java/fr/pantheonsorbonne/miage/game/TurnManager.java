@@ -100,14 +100,19 @@ public class TurnManager {
     }
 
     private String getColorCode(String playerColor) {
-        return switch (playerColor) {
-            case "1" -> ColorUtil.RED;    // Rouge
-            case "2" -> ColorUtil.GREEN;  // Vert
-            case "3" -> ColorUtil.YELLOW; // Jaune
-            case "4" -> ColorUtil.BLUE;   // Bleu
-            default -> ColorUtil.RESET;   // Par défaut
-        };
+        if (playerColor.equals("1")) {
+            return ColorUtil.RED; // Rouge
+        } else if (playerColor.equals("2")) {
+            return ColorUtil.GREEN; // Vert
+        } else if (playerColor.equals("3")) {
+            return ColorUtil.YELLOW; // Jaune
+        } else if (playerColor.equals("4")) {
+            return ColorUtil.BLUE; // Bleu
+        } else {
+            return ColorUtil.RESET; // Par défaut
+        }
     }
+    
 
     private void pause() {
         try {
